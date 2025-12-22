@@ -1,0 +1,104 @@
+/* Container styling to match the "Pop" look */
+.paint-pot-card {
+    width: 100%;
+    background-color: #ffffff;
+    border-radius: 1em;
+    padding: 3%;
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    border: 1px solid #f3f4f6;
+    box-sizing: border-box;
+}
+
+/* Header & Typography */
+.pot-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.pot-title {
+    font-weight: 600;
+    color: #374151;
+}
+
+.section-label {
+    display: block;
+    font-size: 1em;
+    font-weight: 500;
+    color: #6b7280;
+    margin-bottom: 8px;
+}
+
+/* Inputs & Rows */
+.input-row {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 12px;
+}
+
+.pot-input {
+    flex-grow: 1;
+    padding: 2% 3%;
+    border: 1px solid #d1d5db;
+    border-radius: 8px;
+    outline: none;
+    transition: ring 0.2s;
+}
+
+.pot-input:focus {
+    border-color: #6366f1;
+    box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.2);
+}
+
+/* Grid for parameters */
+.grid-2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+}
+
+/* Buttons */
+.btn-add {
+    background-color: #3b82f6; /* Blue as seen in screenshot */
+    color: white;
+    padding: 2% 3%;
+    border-radius: 0.5em;
+    border: none;
+    cursor: pointer;
+    font-weight: 500;
+}
+
+.btn-remove {
+    background-color: #dc2626; /* Red as seen in screenshot */
+    color: white;
+    padding: 2% 3%;
+    border-radius: 0.5em;
+    border: none;
+    cursor: pointer;
+    font-size: 1em;
+}
+
+/* Results Section */
+.divider {
+    border: 0;
+    border-top: 1px solid #f3f4f6;
+    margin: 5% 0;
+}
+
+.result-row {
+    display: flex;
+    align-items: center;
+    gap: 4%;
+    margin-bottom: 10px;
+}
+
+.result-label { font-weight: 600; color: #374151; }
+.text-blue { color: #3b82f6; font-weight: 500; }
+
+.color-preview {
+    width: 1.6em;
+    height: 1.6em;
+    border-radius: 6px;
+    border: 1px solid #e5e7eb;
+}

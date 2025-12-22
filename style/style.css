@@ -1,0 +1,61 @@
+:root {
+  --bg-app: #F4F6F8;
+  --bg-card: #FFFFFF;
+  --border-default: #DADDE1;
+  --header-bg: #2E2E2E;
+  --header-text: #FFFFFF;
+  --sidebar-bg: #F9FAFB;
+  --primary-green: #4CAF50;
+  --primary-blue: #2979FF;
+  --danger-red: #E53935;
+  --text-main: #1F2933;
+  --text-secondary: #6B7280;
+  --result-bg: #F1F5F9;
+}
+
+*, *::before, *::after {
+    font-family: 'Inter', system-ui, -apple-system, sans-serif !important;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+html{
+    padding: 0;
+    margin: 0;
+}
+
+body{
+    padding: 0 0 0 2%;
+    margin: 0;
+    background-color: #F4F6F8;
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    /* This makes the font look smoother */
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    letter-spacing: -0.01em;
+}
+
+main {
+  display: flex;
+  flex-direction: row; /* Aligns children side-by-side */
+  align-items: flex-start; /* Prevents children from stretching vertically */
+  padding-right: 2%; /* Matches your body's left padding */
+}
+
+#container{
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+app-sidebar {
+  display: block;
+  flex: 0 0 300px; /* Sidebar stays exactly 250px wide */
+}
+
+add-paint-pot {
+  display: block;
+  flex: 1; 
+  min-width: 0;
+  width: 100%;
+}
