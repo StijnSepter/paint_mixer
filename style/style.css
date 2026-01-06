@@ -29,7 +29,6 @@ body{
     margin: 0;
     background-color: #F4F6F8;
     font-family: 'Inter', system-ui, -apple-system, sans-serif;
-    /* This makes the font look smoother */
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     letter-spacing: -0.01em;
@@ -37,20 +36,20 @@ body{
 
 main {
   display: flex;
-  flex-direction: row; /* Aligns children side-by-side */
-  align-items: flex-start; /* Prevents children from stretching vertically */
-  padding-right: 2%; /* Matches your body's left padding */
+  flex-direction: row;
+  width: 100%;
 }
 
-#container{
-  flex: 1;
+.container {
+  width: 100%;
   display: flex;
+  min-width: 0;
   flex-direction: column;
 }
 
+
 app-sidebar {
-  display: block;
-  flex: 0 0 300px; /* Sidebar stays exactly 250px wide */
+  flex: 0 0 300px;
 }
 
 add-paint-pot {

@@ -4,13 +4,12 @@
   border: none;
   border-radius: 0.5em;
   padding: 2% 3%;
-  font-size: 14px;
+  font-size: 1em;
   font-weight: 500;
   cursor: pointer;
   display: inline-flex;
   align-items: center;
-  gap: 8px;
-  margin: 5%;
+  margin: 2%;
 }
 
 .add-pot-button:hover {

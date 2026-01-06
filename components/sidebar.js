@@ -3,24 +3,8 @@ class AppSidebar extends HTMLElement {
     this.innerHTML = `
       <aside class="sidebar">
         <h2 class="sidebar-title">Functions & Parameters</h2>
-
-        <section class="sidebar-section">
-          <h3>Global Settings</h3>
-
-          <label>
-            Default Quantity (ml)
-            <input type="number" value="100">
-          </label>
-
-          <label>
-            Mixing Efficiency
-            <select>
-              <option>Low</option>
-              <option>Medium</option>
-              <option>High</option>
-            </select>
-          </label>
-        </section>
+        
+        <ingredient-sidebar></ingredient-sidebar>
 
         <section class="sidebar-section">
           <h3>Environmental Factors</h3>

@@ -1,28 +1,33 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="./style/style.css">
-    <link rel="stylesheet" href="./components/style/header.css">
-    <link rel="stylesheet" href="./components/style/sidebar.css">
-    <link rel="stylesheet" href="./components/style/add_button.css">
-    <link rel="stylesheet" href="./components/style/bucket.css">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="./style/style.css" />
+    <link rel="stylesheet" href="./components/style/header.css" />
+    <link rel="stylesheet" href="./components/style/sidebar.css" />
+    <link rel="stylesheet" href="./components/style/add_button.css" />
+    <link rel="stylesheet" href="./components/style/bucket.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
 
     <script type="module" src="./javascript/main.js" defer></script>
     <title>paint mixer</title>
-</head>
-<body>
+  </head>
+  <body>
     <app-header></app-header>
-<main>
-    <app-sidebar></app-sidebar>
-    <div class="container">
+    <main>
+      <app-sidebar></app-sidebar>
+      <div class="container">
         <add-button></add-button>
-        <add-paint-pot></add-paint-pot>
-    </div>
-</main>
-</body>
+        <div id="pot-container">
+          <add-paint-pot></add-paint-pot>
+        </div>
+      </div>
+    </main>
+  </body>
 </html>
