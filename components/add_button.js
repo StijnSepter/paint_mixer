@@ -6,12 +6,15 @@ class AddPaintPotButton extends HTMLElement {
       </button>
     `;
 
-    this.querySelector('button').addEventListener('click', () => {
+    this.querySelector("button").addEventListener("click", () => {
       this.dispatchEvent(
-        new CustomEvent('add-pot', { bubbles: true })
+        new CustomEvent("assign-pot-to-mixer", {
+          bubbles: true,
+          detail: { pot: this },
+        })
       );
     });
   }
 }
 
-customElements.define('add-button', AddPaintPotButton);
+customElements.define("add-button", AddPaintPotButton);

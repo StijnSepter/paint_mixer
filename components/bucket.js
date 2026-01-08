@@ -20,6 +20,15 @@ class AddPaintPot extends HTMLElement {
       )
       .join("");
   }
+
+  assignToMixer() {
+  document.dispatchEvent(
+    new CustomEvent('assign-pot-to-mixer', {
+      detail: { pot: this }
+    })
+  );
+}
+
   connectedCallback() {
     AddPaintPot.count++;
 
@@ -31,15 +40,15 @@ class AddPaintPot extends HTMLElement {
         </div>
 
         <div class="section">
-            <label class="section-label">Input Colors</label>
+            <label class="section-label">Input ingredients</label>
             <div class="input-group-container">
                 <div class="input-row">
                     <input type="text" value="" class="pot-input">
-                    <button class="btn-add">Add Color</button>
+                    <button class="btn-add">Add ingredients</button>
                 </div>
                 <div class="input-row">
                     <input type="text" value="" class="pot-input">
-                    <button class="btn-add">Add Color</button>
+                    <button class="btn-add">Add ingredients</button>
                 </div>
             </div>
         </div>
@@ -54,6 +63,9 @@ class AddPaintPot extends HTMLElement {
                 <input type="number" value="" class="pot-input">
             </div>
         </div>
+
+       <button class="assign-mixer">Assign to Mixer</button>
+
 
         <hr class="divider">
 
@@ -72,6 +84,8 @@ class AddPaintPot extends HTMLElement {
     </div>
 
     `;
+      this.querySelector('.assign-mixer')
+    .addEventListener('click', () => this.assignToMixer());
   }
 }
 

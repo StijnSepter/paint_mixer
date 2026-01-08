@@ -39,13 +39,14 @@ class IngredientSidebar extends HTMLElement {
     this.innerHTML = `
       <form>
         <input name="name" placeholder="Ingredient name" required />
-        <input name="speed" type="number" placeholder="Mix speed" />
-        <input name="time" type="number" placeholder="Mix time" />
+        <input name="speed" type="number" placeholder="Mix speed" required />
+        <input name="time" type="number" placeholder="Mix time" required />
         <input name="color" type="color" />
         <select name="structure">
-          <option value="liquid">Liquid</option>
-          <option value="powder">Powder</option>
-          <option value="gel">Gel</option>
+          <option value="grainy">grainy</option>
+          <option value="coarse">coarse</option>
+          <option value="smooth">smooth</option>
+          <option value="slimy">slimy</option>
         </select>
         <button type="submit">Create Ingredient</button>
       </form>
