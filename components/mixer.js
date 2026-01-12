@@ -18,13 +18,36 @@ class PaintMixer extends HTMLElement {
       this.baseTime = Number(e.target.value);
       this.updateTime();
     });
-  }
+    this.addEventListener("dragover", (e) => {
+      e.preventDefault(); // REQUIRED for drop
+    });
 
+    this.addEventListener("drop", (e) => {
+      e.preventDefault();
+
+      if (this.pot) {
+        alert("This mixer already contains a pot");
+        return;
+      }
+
+      const potId = e.dataTransfer.getData("pot-id");
+      if (!potId) return;
+
+      const pot = document.getElementById(potId);
+      if (!pot) return;
+
+      this.addPot(pot);
+      this.startMixing();
+    });
+  }
   addPot(pot) {
-    if (this.pot) return; // already occupied
+    if (this.pot) return;
 
     this.pot = pot;
-    this.updateTime();
+    pot.classList.add("in-mixer");
+
+    this.updateMixerUI();
+    this.startMixing();
   }
 
   calculateMixTime() {
@@ -44,43 +67,70 @@ class PaintMixer extends HTMLElement {
     return Math.round(maxTime / speedFactor);
   }
 
-  updateTime() {
-    this.querySelector(".mix-time").textContent =
-      `${this.calculateMixTime()} sec`;
-  }
+ updateTime() {
+  this.querySelector(".mix-time").textContent =
+    `${this.calculateMixTime()} sec`;
+
+  this.updateMixerUI();
+}
+
 
   startMixing() {
-    if (!this.pot) return;
+  if (!this.pot) return;
 
-    const mixTime = this.calculateMixTime();
+  const mixTime = this.calculateMixTime();
+  if (!mixTime) return;
 
-    if (mixTime === 0) return;
+  this.classList.add("mixing");
+  this.querySelector(".mix-time").textContent = "Mixing...";
 
-    setTimeout(() => {
-      // Mixing finished
-      this.finishMixing();
-    }, mixTime * 1000);
-  }
+  setTimeout(() => this.finishMixing(), mixTime * 1000);
+}
+
 
   finishMixing() {
-    if (!this.pot) return;
+  if (!this.pot) return;
 
-    // Mark pot as mixed (state only for now)
-    this.pot.isMixed = true;
+  this.pot.isMixed = true;
+  this.pot.classList.remove("in-mixer");
+  this.pot.classList.add("mixed");
 
-    // Remove pot from mixer
-    this.pot = null;
+  this.pot = null;
+  this.classList.remove("mixing");
 
-    // Update UI
-    this.updateTime();
+  this.updateMixerUI();
+  this.updateTime();
+}
+
+
+  updateMixerUI() {
+  const slot = this.querySelector(".mixer-pot-slot");
+
+  if (!this.pot) {
+    slot.classList.remove("filled");
+    slot.innerHTML = `<span class="empty">Drop pot here</span>`;
+    return;
   }
+
+  slot.classList.add("filled");
+  slot.innerHTML = `
+    <div><strong>Pot ${this.pot.id.slice(0, 4)}</strong></div>
+    <div>Ingredients: ${this.pot.ingredients.length}/3</div>
+    <div>Speed: ${this.speed} RPM</div>
+  `;
+}
+
 
   render() {
     this.innerHTML = `
     <div class="mixer-card">
-      <div style="display: flex; justify-content: space-between;">
-          <strong>Mixer ${this.id.slice(0, 3)}</strong>
-          <span style="font-size: 10px; color: #10b981; font-weight: bold;">● Active</span>
+      <div class="mixer-header">
+        <strong>Mixer ${this.id.slice(0, 3)}</strong>
+        <span class="status-dot">●</span>
+      </div>
+
+      <div class="mixer-pot-slot">
+        <span class="empty">Drop pot here</span>
       </div>
 
       <label>
@@ -93,12 +143,11 @@ class PaintMixer extends HTMLElement {
         <input type="number" value="${this.baseTime}" class="base-time">
       </label>
 
-      <div>
-        <span>Status:</span>
+      <div class="mixer-status">
         <strong class="mix-time">Ready</strong>
       </div>
     </div>
-    `;
+  `;
   }
 }
 

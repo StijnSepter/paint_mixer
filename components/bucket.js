@@ -11,6 +11,14 @@ class AddPaintPot extends HTMLElement {
 
     this.classList.add("pot");
 
+    this.setAttribute("draggable", "true");
+
+    this.addEventListener("dragstart", (e) => {
+      e.dataTransfer.setData("pot-id", this.id);
+      e.dataTransfer.effectAllowed = "move";
+    });
+
+
     this.innerHTML = `
       <div class="paint-pot-card">
     <div class="pot-header">
