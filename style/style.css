@@ -47,9 +47,8 @@ main {
   flex-direction: column;
 }
 
-
 app-sidebar {
-  flex: 0 0 300px;
+  flex: 0 0 335px;
 }
 
 add-paint-pot {

@@ -1,130 +1,180 @@
+/* Container & Layout */
 .paint-pot-card {
-    max-width: 95%;
-    background-color: #fff;
+    width: 90%;
+    background-color: var(--bg-card);
     border-radius: 1em;
-    padding: 3%;
-    margin: 3%;
-    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
-    border: 1px solid #f3f4f6;
-    box-sizing: border-box;
-
+    padding: 2%;
+    box-shadow: var(--shadow-pop);
+    border: 1px solid var(--border-default);
+    transition: transform 0.2s ease;
 }
 
-/* Header & Typography */
+/* Header */
 .pot-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 20px;
+    margin-bottom: 24px;
 }
 
 .pot-title {
-    font-weight: 600;
-    color: #374151;
-}
-
-.section-label {
-    display: block;
-    font-size: 1em;
-    font-weight: 500;
-    color: #6b7280;
-    margin-bottom: 8px;
-}
-
-/* Inputs & Rows */
-.input-row {
-    display: flex;
-    gap: 12px;
-    margin-bottom: 12px;
-}
-
-.pot-input {
-    flex-grow: 1;
-    padding: 2% 3%;
-    border: 1px solid #d1d5db;
-    border-radius: 0.7em;
-    outline: none;
-    transition: ring 0.2s;
-}
-
-.pot-input:focus {
-    border-color: #6366f1;
-    box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.2);
-}
-
-/* Grid for parameters */
-.grid-2 {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 20px;
-}
-
-/* Buttons */
-.btn-add {
-    background-color: #3b82f6; /* Blue as seen in screenshot */
-    color: white;
-    padding: 2% 3%;
-    border-radius: 0.5em;
-    border: none;
-    cursor: pointer;
-    font-weight: 500;
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--text-main);
+    letter-spacing: -0.02em;
 }
 
 .btn-remove {
-    background-color: #dc2626; /* Red as seen in screenshot */
-    color: white;
-    padding: 2% 3%;
-    border-radius: 0.5em;
+    background: #fee2e2;
+    color: #ef4444;
     border: none;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
     cursor: pointer;
-    font-size: 1em;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+}
+
+.btn-remove:hover {
+    background: #ef4444;
+    color: white;
+}
+
+/* NEW Drag & Drop Indicator Style */
+.ingredient-drop-container {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: #f8fafc;
+    border: 2px dashed #cbd5e1;
+    border-radius: 12px;
+    padding: 8px 12px;
+    transition: all 0.2s ease;
+}
+
+/* Make the input look like part of the container */
+.pot-input-display {
+    flex: 1;
+    background: transparent;
+    border: none;
+    font-size: 14px;
+    color: #64748b;
+    outline: none;
+    cursor: default;
+}
+
+/* The "Indicator" - Less like a button, more like a status badge */
+.drag-indicator {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background-color: #e0f2fe; /* Soft blue */
+    color: #0369a1;
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+    pointer-events: none; /* User can't click it */
+    border: 1px solid #bae6fd;
+}
+
+/* Parameters Section */
+.unit-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.unit {
+    position: absolute;
+    right: 12px;
+    font-size: 12px;
+    font-weight: 600;
+    color: #94a3b8;
+}
+
+.pot-input {
+    width: 100%;
+    padding: 12px 40px 12px 12px;
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 10px;
+    font-size: 14px;
+}
+
+/* Assign Button - The Main Action */
+.assign-mixer {
+    width: 100%;
+    margin-top: 24px;
+    padding: 14px;
+    background-color: var(--primary-blue);
+    color: white;
+    border: none;
+    border-radius: 12px;
+    font-weight: 600;
+    font-size: 15px;
+    cursor: pointer;
+    box-shadow: 0 4px 6px -1px rgba(41, 121, 255, 0.2);
+    transition: all 0.2s;
+}
+
+.assign-mixer:hover {
+    filter: brightness(1.1);
+    transform: translateY(-1px);
 }
 
 /* Results Section */
-.divider {
-    border: 0;
-    border-top: 1px solid #f3f4f6;
-    margin: 5% 0;
+.result-card {
+    background: #f1f5f9;
+    padding: 16px;
+    border-radius: 12px;
 }
 
 .result-row {
     display: flex;
+    justify-content: space-between;
     align-items: center;
-    gap: 4%;
-    margin-bottom: 10px;
+    margin-bottom: 8px;
 }
 
-.result-label { font-weight: 600; color: #374151; }
-.text-blue { color: #3b82f6; font-weight: 500; }
+.result-row:last-child { margin-bottom: 0; }
+
+.result-color-group {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
 
 .color-preview {
-    background-color: #808000;
-    width: 1.6em;
-    height: 1.6em;
+    width: 24px;
+    height: 24px;
     border-radius: 6px;
-    border: 1px solid #e5e7eb;
+    border: 2px solid white;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
 
-.drag-over {
-  outline: 2px dashed #3b82f6;
-  background: #eef6ff;
+/* State: Hovering with a valid item */
+.drag-over .ingredient-drop-container {
+    border-color: var(--primary-blue);
+    background-color: #eff6ff;
+    transform: scale(1.01);
 }
 
-.btn-disabled,
-.btn-add:disabled {
-  background-color: #9ca3af; /* grey */
-  cursor: not-allowed;
-  opacity: 0.8;
+/* State: Hovering but pot is full */
+.drag-denied .ingredient-drop-container {
+    border-color: var(--danger-red);
+    background-color: #fef2f2;
+    cursor: not-allowed;
 }
 
-add-paint-pot.pot-full .paint-pot-card {
-  border-color: #9ca3af;
-  background-color: #f9fafb;
-}
-
-.drag-denied {
-  outline: 2px dashed #dc2626;
-  background: #fef2f2;
+/* State: Pot is finished/full */
+.pot-full .ingredient-drop-container {
+    border-style: solid; 
+    background-color: #f9fafb;
+    border-color: var(--border-default);
 }
 
 .btn-add,
