@@ -37,37 +37,63 @@ class IngredientSidebar extends HTMLElement {
 
   render() {
     this.innerHTML = `
-      <form>
-        <input name="name" placeholder="Ingredient name" required />
-        <input name="speed" type="number" placeholder="Mix speed" required />
-        <input name="time" type="number" placeholder="Mix time" required />
-        <input name="color" type="color" />
-        <select name="structure">
-          <option value="grainy">grainy</option>
-          <option value="coarse">coarse</option>
-          <option value="smooth">smooth</option>
-          <option value="slimy">slimy</option>
-        </select>
-        <button type="submit">Create Ingredient</button>
-      </form>
+      <section class="sidebar-section">
+        <h3 class="section-title">Create Ingredient</h3>
+        
+        <form class="ingredient-form">
+          <div class="form-group">
+              <label>Ingredient Name</label>
+              <input name="name" placeholder="e.g., Titanium White" required />
+          </div>
 
-      <hr />
+          <div class="form-group">
+              <label>Mix Speed</label>
+              <input name="speed" type="number" placeholder="RPM" required />
+          </div>
 
-      <ul>
-        ${ingredientStore
-          .getAll()
-          .map(
-            (i) => `
-          <li draggable="true"
-              data-id="${i.id}"
-              class="ingredient-item">
-            ${i.name}
-            <button class="btn-add-ingredient" data-id="${i.id}">Add</button>
-          </li>
-        `
-          )
-          .join("")}
-      </ul>
+          <div class="form-group">
+              <label>Mix Time</label>
+              <input name="time" type="number" placeholder="Seconds" required />
+          </div>
+
+          <div class="form-group">
+              <label>Structure</label>
+              <select name="structure">
+                <option value="grainy">Grainy</option>
+                <option value="coarse">Coarse</option>
+                <option value="smooth">Smooth</option>
+                <option value="slimy">Slimy</option>
+              </select>
+          </div>
+
+          <div class="form-group">
+              <label>Ingredient Color</label>
+              <input name="color" type="color" class="color-input" />
+          </div>
+
+          <button type="submit" class="btn-create-ingredient">Create Ingredient</button>
+        </form>
+
+        <hr class="divider" />
+
+        <h3 class="section-title">Inventory</h3>
+        <ul class="ingredient-list">
+          ${ingredientStore
+            .getAll()
+            .map(
+              (i) => `
+            <li draggable="true" data-id="${i.id}" class="ingredient-item">
+              <div class="ingredient-info">
+                  <span class="ingredient-swatch" style="background-color: ${i.color}"></span>
+                  <span class="ingredient-name">${i.name}</span>
+              </div>
+              <button class="btn-add-indicator" data-id="${i.id}">Add</button>
+            </li>
+          `
+            )
+            .join("")}
+        </ul>
+      </section>
     `;
 
     // makes the list items dragable
