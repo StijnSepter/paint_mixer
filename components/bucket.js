@@ -93,6 +93,26 @@ class AddPaintPot extends HTMLElement {
       );
     });
   }
+  addIngredient(ingredient) {
+    if (this.ingredients.length >= 3) {
+      alert("A pot can contain max 3 ingredients");
+      return;
+    }
+
+    this.ingredients.push(ingredient);
+    this.renderIngredients();
+  }
+
+  renderIngredients() {
+    const input = this.querySelector(".pot-input");
+    const addBtn = this.querySelector(".btn-add");
+
+    input.value = this.ingredients.map((i) => i.name).join(", ");
+
+    if (this.ingredients.length >= 3) {
+      addBtn.disabled = true;
+    }
+  }
 
   assignToMixer() {
     document.dispatchEvent(
