@@ -30,6 +30,13 @@ class AddPaintPot extends HTMLElement {
     </div>
 
     <div class="section grid-2">
+      <div class="input-field">
+            <label class="section-label">Paint Quantity</label>
+            <div class="unit-wrapper">
+                <input type="number" class="pot-input" placeholder="0">
+                <span class="unit">ml</span>
+            </div>
+        </div>
         <div class="input-field">
             <label class="section-label">Outdoor Temp</label>
             <div class="unit-wrapper">
@@ -135,7 +142,7 @@ class AddPaintPot extends HTMLElement {
       this.classList.add("pot-full");
       indicatorText.textContent = "Pot Full";
       indicatorIcon.textContent = "✓";
-      
+
       // Update badge style for "Full" state
       indicator.style.backgroundColor = "#f3f4f6";
       indicator.style.color = "#9ca3af";

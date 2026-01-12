@@ -16,17 +16,7 @@ document.addEventListener('add-ingredient-to-bucket', (e) => {
   pot.addIngredient(ingredient);
 });
 
-document.addEventListener('assign-pot-to-mixer', e => {
-  console.log("add thsi oke ")
-  const pot = document.getElementById(e.detail.potId);
-  if (!pot) return;
-
-  mixer.addPot(pot);
-});
-
-
 document.addEventListener("add-ingredient-to-pot", (e) => {
-  console.log("ingredients")
   const { ingredientId, potId } = e.detail;
 
   const ingredient = ingredientStore.getById(ingredientId);
@@ -35,4 +25,22 @@ document.addEventListener("add-ingredient-to-pot", (e) => {
   if (!pot || !ingredient) return;
 
   pot.addIngredient(ingredient);
+});
+
+
+document.addEventListener('assign-pot-to-mixer', e => {
+  const pot = document.getElementById(e.detail.potId);
+  if (!pot) return;
+
+  const hallMixers = hallStore.getCurrentHallMixers();
+  if (!hallMixers.length) return;
+
+  // Assign to the first available mixer
+  const mixer = hallMixers.find(m => !m.pot);
+  if (!mixer) {
+    alert("No available mixer in this hall");
+    return;
+  }
+
+  mixer.addPot(pot);
 });

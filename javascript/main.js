@@ -5,4 +5,5 @@ import "../components/add_button.js";
 import "../components/ingredients_list.js";
 import "../components/mixer.js"
 import "./dragable.js"
+import "./hall.js"
 import "./scripts.js";
