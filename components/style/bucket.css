@@ -104,3 +104,36 @@
     border-radius: 6px;
     border: 1px solid #e5e7eb;
 }
+
+.drag-over {
+  outline: 2px dashed #3b82f6;
+  background: #eef6ff;
+}
+
+.btn-disabled,
+.btn-add:disabled {
+  background-color: #9ca3af; /* grey */
+  cursor: not-allowed;
+  opacity: 0.8;
+}
+
+add-paint-pot.pot-full .paint-pot-card {
+  border-color: #9ca3af;
+  background-color: #f9fafb;
+}
+
+.drag-denied {
+  outline: 2px dashed #dc2626;
+  background: #fef2f2;
+}
+
+.btn-add,
+.btn-remove,
+.assign-mixer {
+  transition: background-color 0.2s ease;
+}
+
+.pot-input:disabled {
+  background-color: #f3f4f6;
+  color: #6b7280;
+}

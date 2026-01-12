@@ -1,3 +1,5 @@
+import { ingredientStore } from "../store/ingredient_store.js";
+
 const mixer = document.querySelector('paint-mixer');
 
 // creates a new pot when you click on the button "+ add new paint pot"
@@ -22,9 +24,15 @@ document.addEventListener('assign-pot-to-mixer', e => {
   mixer.addPot(pot);
 });
 
-document.addEventListener('assign-pot-to-mixer', e => {
-  const pot = document.getElementById(e.detail.potId);
-  if (!pot) return;
 
-  mixer.addPot(pot);
+document.addEventListener("add-ingredient-to-pot", (e) => {
+  console.log("ingredients")
+  const { ingredientId, potId } = e.detail;
+
+  const ingredient = ingredientStore.getById(ingredientId);
+  const pot = document.getElementById(potId);
+
+  if (!pot || !ingredient) return;
+
+  pot.addIngredient(ingredient);
 });

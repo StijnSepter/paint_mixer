@@ -32,16 +32,18 @@ class PaintMixer extends HTMLElement {
   calculateMixTime() {
     if (!this.pot || this.pot.ingredients.length === 0) return 0;
 
-    let totalFactor = 0;
+    let maxTime = 0;
 
     this.pot.ingredients.forEach(ing => {
-      totalFactor += ing.mixFactor ?? 1;
+      maxTime = Math.max(maxTime, ing.mixTime);
     });
 
-    const avgFactor = totalFactor / this.pot.ingredients.length;
+    const speedFactor =
+      Math.min(this.speed, Math.min(...this.pot.ingredients.map(i => i.maxMixSpeed)));
 
-    return Math.round((this.baseTime * avgFactor) / this.speed);
+    return Math.round(maxTime / speedFactor);
   }
+
 
   updateTime() {
     this.querySelector('.mix-time').textContent =

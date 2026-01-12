@@ -69,19 +69,29 @@ class AddPaintPot extends HTMLElement {
       this.remove()
     );
 
-    this.querySelector(".btn-add").addEventListener("click", () => {
-      document.dispatchEvent(
-        new CustomEvent("request-ingredient-for-pot", {
-          detail: { potId: this.id },
-        })
-      );
-    });
-
     // Drag & Drop
     this.addEventListener("dragover", (e) => e.preventDefault());
 
+    this.addEventListener("dragenter", () => {
+      if (this.ingredients.length < 3) {
+        this.classList.add("drag-over");
+      } else {
+        this.classList.add("drag-denied");
+      }
+    });
+
+    this.classList.remove("drag-over", "drag-denied");
+
     this.addEventListener("drop", (e) => {
+      e.preventDefault();
+
+      if (this.ingredients.length >= 3) {
+        alert("This pot already has 3 ingredients");
+        return;
+      }
+
       const ingredientId = e.dataTransfer.getData("ingredient-id");
+      if (!ingredientId) return;
 
       document.dispatchEvent(
         new CustomEvent("add-ingredient-to-pot", {
@@ -92,7 +102,18 @@ class AddPaintPot extends HTMLElement {
         })
       );
     });
+
+    this.addEventListener("dragenter", () => {
+      if (this.ingredients.length < 3) {
+        this.classList.add("drag-over");
+      }
+    });
+
+    this.addEventListener("dragleave", () => {
+      this.classList.remove("drag-over");
+    });
   }
+
   addIngredient(ingredient) {
     if (this.ingredients.length >= 3) {
       alert("A pot can contain max 3 ingredients");
@@ -109,8 +130,13 @@ class AddPaintPot extends HTMLElement {
 
     input.value = this.ingredients.map((i) => i.name).join(", ");
 
-    if (this.ingredients.length >= 3) {
+    if (this.ingredients.length >= 3 && addBtn) {
       addBtn.disabled = true;
+      addBtn.classList.add("btn-disabled");
+    }
+
+    if (this.ingredients.length >= 3) {
+      this.classList.add("pot-full");
     }
   }
 

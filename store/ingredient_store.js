@@ -1,8 +1,19 @@
 export const ingredientStore = {
   ingredients: [],
 
-  add(ingredient) {
-    this.ingredients.push(ingredient);
+  add({ id, name, color, structure, maxMixSpeed, mixTime }) {
+    if (!id || !name) {
+      throw new Error("Ingredient must have id and name");
+    }
+
+    this.ingredients.push({
+      id,
+      name,
+      color,
+      structure,
+      maxMixSpeed,
+      mixTime
+    });
   },
 
   getAll() {
