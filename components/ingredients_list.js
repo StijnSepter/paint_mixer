@@ -1,4 +1,4 @@
-import { ingredientStore } from '../store/ingredient_store.js';
+import { ingredientStore } from "../store/ingredient_store.js";
 
 class IngredientSidebar extends HTMLElement {
   connectedCallback() {
@@ -58,17 +58,35 @@ class IngredientSidebar extends HTMLElement {
           .getAll()
           .map(
             (i) => `
-          <li>
+          <li draggable="true"
+              data-id="${i.id}"
+              class="ingredient-item">
             ${i.name}
-            <button class="btn-add-ingredient" data-id="${i.id}">
-              Add
-            </button>
+            <button class="btn-add-ingredient" data-id="${i.id}">Add</button>
           </li>
         `
           )
           .join("")}
       </ul>
     `;
+
+    // makes the list items dragable
+    this.addEventListener("dragstart", (e) => {
+      if (!e.target.matches(".ingredient-item")) return;
+      e.dataTransfer.setData("ingredient-id", e.target.dataset.id);
+    });
+
+    this.addEventListener("click", (e) => {
+      if (!e.target.matches(".btn-add-ingredient")) return;
+
+      const ingredientId = e.target.dataset.id;
+
+      document.dispatchEvent(
+        new CustomEvent("ingredient-selected", {
+          detail: { ingredientId },
+        })
+      );
+    });
   }
 }
 

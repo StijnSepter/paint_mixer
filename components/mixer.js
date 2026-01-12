@@ -1,9 +1,7 @@
-import { potStore } from '../store/bucket_store.js';
-
 class PaintMixer extends HTMLElement {
   constructor() {
     super();
-    this.pots = [];
+    this.pot = null; // ONE bucket only
     this.speed = 1;
     this.baseTime = 30;
   }
@@ -11,40 +9,36 @@ class PaintMixer extends HTMLElement {
   connectedCallback() {
     this.render();
 
-    this.querySelector('.speed').addEventListener('input', e => {
-      this.speed = Number(e.target.value);
-      this.updateTime();
-    });
+    this.querySelector('.speed')
+      .addEventListener('input', e => {
+        this.speed = Number(e.target.value);
+        this.updateTime();
+      });
 
-    this.querySelector('.base-time').addEventListener('input', e => {
-      this.baseTime = Number(e.target.value);
-      this.updateTime();
-    });
+    this.querySelector('.base-time')
+      .addEventListener('input', e => {
+        this.baseTime = Number(e.target.value);
+        this.updateTime();
+      });
   }
 
   addPot(pot) {
-    this.pots.push(pot);
+    if (this.pot) return; // already occupied
+
+    this.pot = pot;
     this.updateTime();
   }
 
-  calculateMixTime(mixer) {
-    const pots = mixer.potIds
-    .map(id => potStore.getById(id))
-    .filter(Boolean);
-
-    if (this.pots.length === 0) return 0;
+  calculateMixTime() {
+    if (!this.pot || this.pot.ingredients.length === 0) return 0;
 
     let totalFactor = 0;
-    let ingredientCount = 0;
 
-    this.pots.forEach(pot => {
-      pot.ingredients.forEach(ing => {
-        totalFactor += ing.mixFactor ?? 1;
-        ingredientCount++;
-      });
+    this.pot.ingredients.forEach(ing => {
+      totalFactor += ing.mixFactor ?? 1;
     });
 
-    const avgFactor = ingredientCount ? totalFactor / ingredientCount : 1;
+    const avgFactor = totalFactor / this.pot.ingredients.length;
 
     return Math.round((this.baseTime * avgFactor) / this.speed);
   }
@@ -53,6 +47,33 @@ class PaintMixer extends HTMLElement {
     this.querySelector('.mix-time').textContent =
       `${this.calculateMixTime()} sec`;
   }
+
+  startMixing() {
+  if (!this.pot) return;
+
+  const mixTime = this.calculateMixTime();
+
+  if (mixTime === 0) return;
+
+  setTimeout(() => {
+    // Mixing finished
+    this.finishMixing();
+  }, mixTime * 1000);
+}
+
+finishMixing() {
+  if (!this.pot) return;
+
+  // Mark pot as mixed (state only for now)
+  this.pot.isMixed = true;
+
+  // Remove pot from mixer
+  this.pot = null;
+
+  // Update UI
+  this.updateTime();
+}
+
 
   render() {
     this.innerHTML = `
@@ -65,7 +86,7 @@ class PaintMixer extends HTMLElement {
         </label>
 
         <label>
-          Base time (sec)
+          Base time
           <input type="number" value="${this.baseTime}" class="base-time">
         </label>
 

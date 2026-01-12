@@ -1,5 +1,7 @@
 class AddPaintPotButton extends HTMLElement {
   connectedCallback() {
+    this.id ||= crypto.randomUUID();
+
     this.innerHTML = `
       <button class="add-pot-button">
         + Add New Paint Pot
@@ -8,9 +10,8 @@ class AddPaintPotButton extends HTMLElement {
 
     this.querySelector("button").addEventListener("click", () => {
       this.dispatchEvent(
-        new CustomEvent("assign-pot-to-mixer", {
-          bubbles: true,
-          detail: { pot: this },
+        new CustomEvent("add-pot", {
+          bubbles: true
         })
       );
     });
