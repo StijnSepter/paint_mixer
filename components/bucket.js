@@ -78,6 +78,21 @@ class AddPaintPot extends HTMLElement {
 
     /* ---------- EVENTS ---------- */
 
+   class AddPaintPot extends HTMLElement {
+
+  get paintQuantity() {
+    return Number(this.querySelector('.pot-input[placeholder="0"]').value) || 0;
+  }
+
+  get temperature() {
+    return Number(
+      this.querySelectorAll('.pot-input')[1].value
+    ) || 0;
+  }
+
+}
+
+
     this.querySelector(".assign-mixer").addEventListener("click", () =>
       this.assignToMixer()
     );
