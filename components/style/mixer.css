@@ -14,11 +14,6 @@
   color: #1e3a8a;
 }
 
-.status-dot {
-  color: #10b981;
-  font-size: 12px;
-}
-
 
 /* Small Indicator Button (Add) */
 .btn-add-indicator {
@@ -162,7 +157,57 @@
   background: #ecfdf5;
 }
 
-.status-dot.idle { color: red; }
-.status-dot.mixing { color: #10b981; }
-.status-dot.done { color: #9ca3af; }
+.status-indicator {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  position: relative;
+  font-size: 18px;
+}
 
+/* DOT */
+.status-indicator .dot {
+  position: absolute;
+  transition: color 0.3s ease;
+}
+
+/* HOURGLASS */
+.status-indicator .hourglass {
+  position: absolute;
+  opacity: 0;
+  transform-origin: center;
+}
+
+/* STATES */
+.status-indicator.idle .dot {
+  color: #9ca3af; /* gray */
+}
+
+.status-indicator.done .dot {
+  color: #ef4444; /* red */
+}
+
+.status-indicator.mixing .dot {
+  opacity: 0;
+}
+
+.status-indicator.mixing .hourglass {
+  opacity: 1;
+  animation: spin linear infinite;
+}
+
+/* ROTATION */
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.status-indicator.mixing .hourglass {
+  animation-duration: var(--spin-speed, 1s);
+}

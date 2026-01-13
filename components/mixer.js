@@ -6,7 +6,8 @@ class PaintMixer extends HTMLElement {
     this.pot = null;
     this.speed = 0;
     this.baseTime = 0;
-    this.state = "idle"; // idle | mixing | done
+    this.state = "idle";
+    this.mixDuration = 0;
   }
 
   connectedCallback() {
@@ -40,7 +41,7 @@ class PaintMixer extends HTMLElement {
 
   getCombinedColor() {
     if (!this.pot || !this.pot.ingredients.length) return null;
-    const rgbColors = this.pot.ingredients.map(i => hexToRgb(i.color));
+    const rgbColors = this.pot.ingredients.map((i) => hexToRgb(i.color));
     return averageRGB(rgbColors);
   }
 
@@ -53,6 +54,10 @@ class PaintMixer extends HTMLElement {
   /* ---------- MIXING ---------- */
 
   addPot(pot) {
+    if (!pot.ingredients || pot.ingredients.length === 0) {
+      alert("This pot has no ingredients! Add some before mixing.");
+      return;
+    }
     this.pot = pot;
     this.state = "mixing";
     pot.classList.add("in-mixer");
@@ -68,20 +73,25 @@ class PaintMixer extends HTMLElement {
     // ✅ SAFE numeric reads
     const inputs = pot.querySelectorAll(".pot-input");
 
-    const quantity = Number(inputs[0]?.value) || 0;     // ml
-    const temperature = Number(inputs[1]?.value) || 0;  // °C
+    const quantity = Math.max(Number(inputs[0]?.value) || 0, 200);
+    console.log(quantity)
+    const temperature = Number(inputs[1]?.value) || 15;
 
     // ✅ guaranteed numbers
     this.speed = Math.max(100, 500 - quantity * 2 + temperature * 3);
-    this.baseTime = Math.max(5, quantity / 10 - temperature / 5);
+    console.log(quantity)
+    this.baseTime = Math.max(5, quantity / 10 + temperature / 2);
+    console.log(quantity)
   }
 
   startMixing() {
-    const mixTime = this.calculateMixTime();
-    if (!mixTime) return;
+    this.mixDuration = this.calculateMixTime();
+    if (!this.mixDuration) return;
 
     this.querySelector(".mix-time").textContent = "Mixing...";
-    setTimeout(() => this.finishMixing(), mixTime * 1000);
+
+    // use float time for setTimeout
+    setTimeout(() => this.finishMixing(), this.mixDuration * 1000);
   }
 
   finishMixing() {
@@ -100,25 +110,32 @@ class PaintMixer extends HTMLElement {
   /* ---------- CALCULATIONS ---------- */
 
   calculateMixTime() {
-    if (!this.pot || this.pot.ingredients.length === 0) return 0;
+    if (!this.pot || !this.pot.ingredients.length) return 0;
 
-    const maxTime = Math.max(...this.pot.ingredients.map(i => i.mixTime));
-    const speedLimit = Math.min(...this.pot.ingredients.map(i => i.maxMixSpeed));
+    const maxTime = Math.max(
+      ...this.pot.ingredients.map((i) => i.mixTime || 0)
+    );
+    const speedLimit = Math.min(
+      ...this.pot.ingredients.map((i) => i.maxMixSpeed || 500)
+    );
 
-    const effectiveSpeed = Math.min(this.speed || 1, speedLimit);
+    // ensure speed is capped by ingredient limits
+    const effectiveRPM = Math.min(this.speed || 1, speedLimit);
+    const secondsPerRotation = Math.max(0.5, 60 / effectiveRPM); // minimum half-second per rotation
 
-    return Math.round((maxTime + this.baseTime) / effectiveSpeed);
+    // mixing time = ingredient time * seconds per rotation + baseTime
+    const totalTime = maxTime * secondsPerRotation + this.baseTime;
+
+    // optional: ensure minimum time so user sees animation
+    return Math.max(totalTime, 5);
   }
 
   /* ---------- UI ---------- */
 
   updateMixerUI() {
     const slot = this.querySelector(".mixer-pot-slot");
-    const dot = this.querySelector(".status-dot");
     const circle = this.querySelector(".color-circle");
     const value = this.querySelector(".color-value");
-
-    dot.className = `status-dot ${this.state}`;
 
     const colorCss = this.getCombinedColorCss();
     circle.style.background = colorCss || "#e5e7eb";
@@ -130,7 +147,12 @@ class PaintMixer extends HTMLElement {
       slot.innerHTML = `
         <div><strong>Pot ${this.pot.id.slice(0, 4)}</strong></div>
         <div>Ingredients: ${this.pot.ingredients.length}/3</div>
-        <div>Mix time: ${this.calculateMixTime()} sec</div>
+        <div>Mix time: ${
+          this.state === "mixing"
+            ? Math.round(this.mixDuration)
+            : Math.round(this.calculateMixTime())
+        } sec</div>
+
       `;
     }
 
@@ -139,6 +161,19 @@ class PaintMixer extends HTMLElement {
       <div>Speed: <strong>${this.speed} RPM</strong></div>
       <div>Base time: <strong>${this.baseTime} sec</strong></div>
     `;
+
+    // add the hourglass animation
+    const indicator = this.querySelector(".status-indicator");
+
+    indicator.className = `status-indicator ${this.state}`;
+
+    if (this.state === "mixing") {
+      // RPM → seconds per rotation
+      const secondsPerTurn = Math.max(0.3, 60 / (this.speed || 60));
+      indicator.style.setProperty("--spin-speed", `${secondsPerTurn}s`);
+    } else {
+      indicator.style.removeProperty("--spin-speed");
+    }
   }
 
   render() {
@@ -146,7 +181,10 @@ class PaintMixer extends HTMLElement {
       <div class="mixer-card">
         <div class="mixer-header">
           <strong>Mixer ${this.id?.slice(0, 3) ?? ""}</strong>
-          <span class="status-dot idle">●</span>
+          <span class="status-indicator idle">
+            <span class="dot">●</span>
+            <span class="hourglass">⏳</span>
+          </span>
         </div>
 
         <div class="mixer-pot-slot">

@@ -1,4 +1,11 @@
 class AddPaintPot extends HTMLElement {
+  get paintQuantity() {
+    return Number(this.querySelectorAll(".pot-input")[0]?.value) || 0;
+  }
+
+  get temperature() {
+    return Number(this.querySelectorAll(".pot-input")[1]?.value) || 0;
+  }
   connectedCallback() {
     // ✅ 1. Ensure unique ID
     if (!this.id) {
@@ -20,78 +27,63 @@ class AddPaintPot extends HTMLElement {
 
     this.innerHTML = `
       <div class="paint-pot-card">
-    <div class="pot-header">
-        <span class="pot-title">Paint Pot ${this.shortId}</span>
-        <button class="btn-remove" title="Remove Pot">✕</button>
-    </div>
+          <div class="pot-header">
+              <span class="pot-title">Paint Pot ${this.shortId}</span>
+              <button class="btn-remove" title="Remove Pot">✕</button>
+          </div>
 
-    <div class="section">
-        <label class="section-label">Input Ingredients</label>
-        <div class="ingredient-drop-container">
-            <input type="text" class="pot-input-display" placeholder="Drag ingredients here..." disabled>
-            <div class="drag-indicator">
-                <span class="icon">+</span>
-                <span class="text">Room for more</span>
-            </div>
-        </div>
-    </div>
+          <div class="section">
+              <label class="section-label">Input Ingredients</label>
+              <div class="ingredient-drop-container">
+                  <input type="text" class="pot-input-display" placeholder="Drag ingredients here..." disabled>
+                  <div class="drag-indicator">
+                      <span class="icon">+</span>
+                      <span class="text">Room for more</span>
+                  </div>
+              </div>
+          </div>
 
-    <div class="section grid-2">
-      <div class="input-field">
-            <label class="section-label">Paint Quantity</label>
-            <div class="unit-wrapper">
-                <input type="number" class="pot-input" placeholder="0">
-                <span class="unit">ml</span>
-            </div>
-        </div>
-        <div class="input-field">
-            <label class="section-label">Outdoor Temp</label>
-            <div class="unit-wrapper">
-                <input type="number" class="pot-input" placeholder="0">
-                <span class="unit">°C</span>
-            </div>
-        </div>
-    </div>
+          <div class="section grid-2">
+            <div class="input-field">
+                  <label class="section-label">Paint Quantity</label>
+                  <div class="unit-wrapper">
+                      <input type="number" class="pot-input" placeholder="200">
+                      <span class="unit">ml</span>
+                  </div>
+              </div>
+              <div class="input-field">
+                  <label class="section-label">Outdoor Temp</label>
+                  <div class="unit-wrapper">
+                      <input type="number" class="pot-input" placeholder="20">
+                      <span class="unit">°C</span>
+                  </div>
+              </div>
+          </div>
 
-    <button class="assign-mixer">Assign to Mixer</button>
+          <button class="assign-mixer">Assign to Mixer</button>
 
-    <hr class="divider">
+          <hr class="divider">
 
-    <div class="section result-section">
-        <label class="section-label">Mixing Result</label>
-        <div class="result-card">
-            <div class="result-row">
-                <span class="result-label">Mixing Time</span>
-                <span class="result-value text-blue">-- min</span>
-            </div>
-            <div class="result-row">
-                <span class="result-label">Resulting Color</span>
-                <div class="result-color-group">
-                    <div class="color-preview"></div>
-                    <span class="result-value text-blue">#------</span>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
+          <div class="section result-section">
+              <label class="section-label">Mixing Result</label>
+              <div class="result-card">
+                  <div class="result-row">
+                      <span class="result-label">Mixing Time</span>
+                      <span class="result-value text-blue">-- min</span>
+                  </div>
+                  <div class="result-row">
+                      <span class="result-label">Resulting Color</span>
+                      <div class="result-color-group">
+                          <div class="color-preview"></div>
+                          <span class="result-value text-blue">#------</span>
+                      </div>
+                  </div>
+              </div>
+          </div>
+      </div>
     `;
 
     /* ---------- EVENTS ---------- */
-
-   class AddPaintPot extends HTMLElement {
-
-  get paintQuantity() {
-    return Number(this.querySelector('.pot-input[placeholder="0"]').value) || 0;
-  }
-
-  get temperature() {
-    return Number(
-      this.querySelectorAll('.pot-input')[1].value
-    ) || 0;
-  }
-
-}
-
 
     this.querySelector(".assign-mixer").addEventListener("click", () =>
       this.assignToMixer()
