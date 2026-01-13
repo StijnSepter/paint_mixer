@@ -38,14 +38,20 @@ main {
   display: flex;
   flex-direction: row;
   width: 100%;
+  min-height: 100vh;
+  overflow: hidden; /* prevent main horizontal scroll */
 }
 
 .container {
-  width: 100%;
+  flex: 1;                  /* take remaining horizontal space */
   display: flex;
-  min-width: 0;
   flex-direction: column;
+  overflow-y: auto;         /* scroll main content vertically */
+  min-width: 0;             /* important for flex children to shrink */
+  padding-left: 20px;
 }
+
+
 
 app-sidebar {
   flex: 0 0 335px;

@@ -6,4 +6,5 @@ import "../components/ingredients_list.js";
 import "../components/mixer.js"
 import "./dragable.js"
 import "./hall.js"
+import "./color.js"
 import "./scripts.js";

@@ -18,7 +18,6 @@ class AddPaintPot extends HTMLElement {
       e.dataTransfer.effectAllowed = "move";
     });
 
-
     this.innerHTML = `
       <div class="paint-pot-card">
     <div class="pot-header">
@@ -142,24 +141,48 @@ class AddPaintPot extends HTMLElement {
     const indicatorText = indicator.querySelector(".text");
     const indicatorIcon = indicator.querySelector(".icon");
 
-    // Update the list of names in the input field
+    // ---- INGREDIENT NAMES ----
     inputDisplay.value = this.ingredients.map((i) => i.name).join(", ");
 
+    // ---- POT CAPACITY UI ----
     if (this.ingredients.length >= 3) {
-      // Pot is Full Logic
       this.classList.add("pot-full");
       indicatorText.textContent = "Pot Full";
       indicatorIcon.textContent = "✓";
 
-      // Update badge style for "Full" state
       indicator.style.backgroundColor = "#f3f4f6";
       indicator.style.color = "#9ca3af";
       indicator.style.borderColor = "#d1d5db";
     } else {
-      // Room for more logic
       this.classList.remove("pot-full");
       indicatorText.textContent = "Room for more";
       indicatorIcon.textContent = "+";
+    }
+
+    // ---- MIX RESULT UI (only if inside mixer) ----
+    const timeEl = this.querySelector(".result-row .result-value");
+    const colorPreview = this.querySelector(".color-preview");
+    const colorText = this.querySelector(".result-color-group span");
+
+    if (this.mixer) {
+      // <-- only if this pot has been assigned to a mixer
+      const mixTime = this.mixer.calculateMixTime(); // use the mixer to calculate
+      const colorCss = this.mixer.getCombinedColorCss();
+
+      timeEl.textContent = mixTime ? `${mixTime} sec` : "--";
+
+      if (colorCss) {
+        colorPreview.style.background = colorCss;
+        colorText.textContent = colorCss;
+      } else {
+        colorPreview.style.background = "#e5e7eb";
+        colorText.textContent = "#------";
+      }
+    } else {
+      // Pot not yet in a mixer → show defaults
+      timeEl.textContent = "--";
+      colorPreview.style.background = "#e5e7eb";
+      colorText.textContent = "#------";
     }
   }
 

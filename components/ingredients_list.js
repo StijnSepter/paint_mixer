@@ -13,11 +13,12 @@ class IngredientSidebar extends HTMLElement {
     const ingredient = {
       id: crypto.randomUUID(),
       name: this.querySelector('[name="name"]').value,
-      mixingSpeed: Number(this.querySelector('[name="speed"]').value),
-      mixingTime: Number(this.querySelector('[name="time"]').value),
+      maxMixSpeed: Number(this.querySelector('[name="speed"]').value),
+      mixTime: Number(this.querySelector('[name="time"]').value),
       color: this.querySelector('[name="color"]').value,
       structure: this.querySelector('[name="structure"]').value,
     };
+
 
     ingredientStore.add(ingredient);
     this.render();

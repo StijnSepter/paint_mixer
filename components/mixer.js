@@ -1,26 +1,25 @@
+import { hexToRgb, averageRGB } from "../javascript/color.js"
+
 class PaintMixer extends HTMLElement {
   constructor() {
     super();
-    this.pot = null; // ONE bucket only
+    this.pot = null;
     this.speed = 1;
     this.baseTime = 30;
+    this.state = "idle"; // idle | mixing | done
   }
 
   connectedCallback() {
     this.render();
 
-    this.querySelector(".speed").addEventListener("input", (e) => {
-      this.speed = Number(e.target.value);
-      this.updateTime();
-    });
+    this.enableDragDrop();
+    this.updateMixerUI();
+  }
 
-    this.querySelector(".base-time").addEventListener("input", (e) => {
-      this.baseTime = Number(e.target.value);
-      this.updateTime();
-    });
-    this.addEventListener("dragover", (e) => {
-      e.preventDefault(); // REQUIRED for drop
-    });
+  /* ---------- DRAG & DROP ---------- */
+
+  enableDragDrop() {
+    this.addEventListener("dragover", (e) => e.preventDefault());
 
     this.addEventListener("drop", (e) => {
       e.preventDefault();
@@ -31,123 +30,155 @@ class PaintMixer extends HTMLElement {
       }
 
       const potId = e.dataTransfer.getData("pot-id");
-      if (!potId) return;
-
       const pot = document.getElementById(potId);
       if (!pot) return;
 
       this.addPot(pot);
-      this.startMixing();
     });
   }
+
+  /* ---------- get color value ---------- */
+
+  getCombinedColor() {
+  if (!this.pot || !this.pot.ingredients.length) return null;
+
+  const rgbColors = this.pot.ingredients.map(i => hexToRgb(i.color));
+  return averageRGB(rgbColors);
+}
+
+getCombinedColorCss() {
+  const c = this.getCombinedColor();
+  if (!c) return null;
+  return `rgb(${c.r}, ${c.g}, ${c.b})`;
+}
+
+
+  getMixTime() {
+    if (!this.ingredients.length) return 0;
+    return Math.max(...this.ingredients.map((i) => i.mixTime));
+  }
+
+  /* ---------- MIXING ---------- */
+
   addPot(pot) {
     if (this.pot) return;
 
     this.pot = pot;
+    this.state = "mixing";
+
     pot.classList.add("in-mixer");
 
     this.updateMixerUI();
     this.startMixing();
   }
 
+  startMixing() {
+    const mixTime = this.calculateMixTime();
+    if (!mixTime) return;
+
+    this.querySelector(".mix-time").textContent = "Mixing...";
+
+    setTimeout(() => this.finishMixing(), mixTime * 1000);
+  }
+
+  finishMixing() {
+    if (!this.pot) return;
+
+    this.pot.isMixed = true;
+    this.pot.classList.remove("in-mixer");
+    this.pot.classList.add("mixed");
+
+    this.pot = null;
+    this.state = "done";
+
+    this.updateMixerUI();
+    this.updateTime();
+  }
+
+  /* ---------- CALCULATIONS ---------- */
+
   calculateMixTime() {
     if (!this.pot || this.pot.ingredients.length === 0) return 0;
 
-    let maxTime = 0;
-
-    this.pot.ingredients.forEach((ing) => {
-      maxTime = Math.max(maxTime, ing.mixTime);
-    });
-
-    const speedFactor = Math.min(
-      this.speed,
-      Math.min(...this.pot.ingredients.map((i) => i.maxMixSpeed))
+    const maxTime = Math.max(...this.pot.ingredients.map((i) => i.mixTime));
+    const speedLimit = Math.min(
+      ...this.pot.ingredients.map((i) => i.maxMixSpeed)
     );
 
-    return Math.round(maxTime / speedFactor);
+    return Math.round(maxTime / Math.min(this.speed, speedLimit));
   }
 
- updateTime() {
-  this.querySelector(".mix-time").textContent =
-    `${this.calculateMixTime()} sec`;
+  updateTime() {
+    const time = this.calculateMixTime();
+    this.querySelector(".mix-time").textContent =
+      this.state === "mixing" ? "Mixing..." : `${time} sec`;
 
-  this.updateMixerUI();
-}
+    this.updateMixerUI();
+  }
 
-
-  startMixing() {
-  if (!this.pot) return;
-
-  const mixTime = this.calculateMixTime();
-  if (!mixTime) return;
-
-  this.classList.add("mixing");
-  this.querySelector(".mix-time").textContent = "Mixing...";
-
-  setTimeout(() => this.finishMixing(), mixTime * 1000);
-}
-
-
-  finishMixing() {
-  if (!this.pot) return;
-
-  this.pot.isMixed = true;
-  this.pot.classList.remove("in-mixer");
-  this.pot.classList.add("mixed");
-
-  this.pot = null;
-  this.classList.remove("mixing");
-
-  this.updateMixerUI();
-  this.updateTime();
-}
-
+  /* ---------- UI ---------- */
 
   updateMixerUI() {
   const slot = this.querySelector(".mixer-pot-slot");
+  const dot = this.querySelector(".status-dot");
+  const circle = this.querySelector(".color-circle");
+  const value = this.querySelector(".color-value");
+
+  dot.className = `status-dot ${this.state}`;
+
+  const colorCss = this.getCombinedColorCss();
+  if (!colorCss) {
+    circle.style.background = "#e5e7eb";
+    value.textContent = "--";
+  } else {
+    circle.style.background = colorCss;
+    value.textContent = colorCss;
+  }
 
   if (!this.pot) {
-    slot.classList.remove("filled");
     slot.innerHTML = `<span class="empty">Drop pot here</span>`;
     return;
   }
 
-  slot.classList.add("filled");
   slot.innerHTML = `
     <div><strong>Pot ${this.pot.id.slice(0, 4)}</strong></div>
     <div>Ingredients: ${this.pot.ingredients.length}/3</div>
-    <div>Speed: ${this.speed} RPM</div>
+    <div>Mix time: ${this.calculateMixTime()} sec</div>
   `;
 }
 
 
   render() {
     this.innerHTML = `
-    <div class="mixer-card">
-      <div class="mixer-header">
-        <strong>Mixer ${this.id.slice(0, 3)}</strong>
-        <span class="status-dot">●</span>
+      <div class="mixer-card">
+        <div class="mixer-header">
+          <strong>Mixer ${this.id?.slice(0, 3) ?? ""}</strong>
+          <span class="status-dot idle">●</span>
+        </div>
+
+        <div class="mixer-pot-slot">
+          <span class="empty">Drop pot here</span>
+        </div>
+
+        <div class="mixer-info">
+          <div>Speed: <strong>${this.speed} RPM</strong></div>
+          <div>Base time: <strong>${this.baseTime} sec</strong></div>
+        </div>
+
+        <label>
+          Combined color
+          <div class="color-display">
+            <span class="color-circle"></span>
+            <span class="color-value">--</span>
+          </div>
+        </label>
+
+
+        <div class="mixer-status">
+          <strong class="mix-time">Ready</strong>
+        </div>
       </div>
-
-      <div class="mixer-pot-slot">
-        <span class="empty">Drop pot here</span>
-      </div>
-
-      <label>
-        Speed (RPM)
-        <input type="number" step="0.1" value="${this.speed}" class="speed">
-      </label>
-
-      <label>
-        Base time (sec)
-        <input type="number" value="${this.baseTime}" class="base-time">
-      </label>
-
-      <div class="mixer-status">
-        <strong class="mix-time">Ready</strong>
-      </div>
-    </div>
-  `;
+    `;
   }
 }
 

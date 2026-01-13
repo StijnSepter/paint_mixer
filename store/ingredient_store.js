@@ -11,8 +11,8 @@ export const ingredientStore = {
       name,
       color,
       structure,
-      maxMixSpeed,
-      mixTime
+      maxMixSpeed: maxMixSpeed, // same here
+      mixTime: mixTime 
     });
   },
 
