@@ -54,47 +54,70 @@ class PaintMixer extends HTMLElement {
   /* ---------- MIXING ---------- */
 
   addPot(pot) {
-    if (!pot.ingredients || pot.ingredients.length === 0) {
-      alert("This pot has no ingredients! Add some before mixing.");
-      return;
-    }
-    this.pot = pot;
-    this.state = "mixing";
-    pot.classList.add("in-mixer");
+  if (!pot.ingredients || pot.ingredients.length === 0) return;
 
-    // ✅ calculate speed & base time safely
-    this.updateFromPot(pot);
+  this.pot = pot;
+  
+  // Listen for changes while the pot is IN the mixer
+  this.pot.querySelectorAll('.pot-input').forEach(input => {
+    input.addEventListener('input', () => {
+      if (this.state === 'mixing') return; // Don't change math mid-mix
+      this.updateFromPot(this.pot);
+      this.updateMixerUI();
+    });
+  });
 
-    this.updateMixerUI();
-    this.startMixing();
-  }
+  this.state = "idle"; // Let the user see the calculated time before they hit start (optional)
+  this.updateFromPot(pot);
+  this.startMixing();
+}
 
   updateFromPot(pot) {
-    // ✅ SAFE numeric reads
     const inputs = pot.querySelectorAll(".pot-input");
 
-    const quantity = Math.max(Number(inputs[0]?.value) || 0, 200);
-    console.log(quantity)
+    const quantity = Number(inputs[0]?.value);
+    const safeQuantity = Number.isFinite(quantity) ? quantity : 200;
     const temperature = Number(inputs[1]?.value) || 15;
 
-    // ✅ guaranteed numbers
-    this.speed = Math.max(100, 500 - quantity * 2 + temperature * 3);
-    console.log(quantity)
-    this.baseTime = Math.max(5, quantity / 10 + temperature / 2);
-    console.log(quantity)
+    this.speed = Math.max(100, 500 - safeQuantity * 2 + temperature * 3);
+    this.baseTime = Math.max(5, safeQuantity / 10 + temperature / 2);
   }
 
-  startMixing() {
+  Mixing() {
+    console.log("start mixing", this);
     this.mixDuration = this.calculateMixTime();
-    if (!this.mixDuration) return;
+    if (this.mixDuration <= 0) {
+      console.warn("Invalid mixDuration:", this.mixDuration);
+      return;
+    }
 
     this.querySelector(".mix-time").textContent = "Mixing...";
 
     // use float time for setTimeout
-    setTimeout(() => this.finishMixing(), this.mixDuration * 1000);
+    console.log("start mixing");
+    setTimeout(() => {
+      console.log("timeout fired", this, "pot:", this.pot);
+      this.finishMixing();
+    }, this.mixDuration * 1000);
+  }
+
+  startMixing() {
+    clearTimeout(this.mixTimeout);
+
+    this.mixDuration = this.calculateMixTime();
+    if (this.mixDuration <= 0) return;
+
+    this.state = "mixing";
+    this.updateMixerUI();
+
+    this.mixTimeout = setTimeout(
+      () => this.finishMixing(),
+      this.mixDuration * 1000
+    );
   }
 
   finishMixing() {
+    console.log("fishis mixing started");
     if (!this.pot) return;
 
     this.pot.isMixed = true;
@@ -110,25 +133,27 @@ class PaintMixer extends HTMLElement {
   /* ---------- CALCULATIONS ---------- */
 
   calculateMixTime() {
-    if (!this.pot || !this.pot.ingredients.length) return 0;
+  if (!this.pot || !this.pot.ingredients.length) return 0;
 
-    const maxTime = Math.max(
-      ...this.pot.ingredients.map((i) => i.mixTime || 0)
-    );
-    const speedLimit = Math.min(
-      ...this.pot.ingredients.map((i) => i.maxMixSpeed || 500)
-    );
+  // 1. Find the most demanding ingredient time
+  const requiredTime = Math.max(...this.pot.ingredients.map(i => i.mixTime || 0));
 
-    // ensure speed is capped by ingredient limits
-    const effectiveRPM = Math.min(this.speed || 1, speedLimit);
-    const secondsPerRotation = Math.max(0.5, 60 / effectiveRPM); // minimum half-second per rotation
+  // 2. Find the bottleneck speed (the lowest maxSpeed of any ingredient)
+  const speedLimit = Math.min(...this.pot.ingredients.map(i => i.maxMixSpeed || 500));
 
-    // mixing time = ingredient time * seconds per rotation + baseTime
-    const totalTime = maxTime * secondsPerRotation + this.baseTime;
+  // 3. Cap the mixer's calculated speed by the ingredients' physical limits
+  const effectiveRPM = Math.min(this.speed || 1, speedLimit);
 
-    // optional: ensure minimum time so user sees animation
-    return Math.max(totalTime, 5);
-  }
+  // 4. Time Factor: If effectiveRPM is lower than the speed limit, mixing takes LONGER.
+  // Formula: Required Time * (Speed Limit / Effective Speed)
+  const speedEfficiency = speedLimit / effectiveRPM; 
+  
+  const totalTime = (requiredTime * speedEfficiency) + this.baseTime;
+
+  console.log(`Mix Calculation: Req(${requiredTime}s) * Factor(${speedEfficiency.toFixed(2)}) + Base(${this.baseTime}s) = ${totalTime.toFixed(2)}s`);
+
+  return Math.max(totalTime, 5); // Minimum 5 seconds for UX
+}
 
   /* ---------- UI ---------- */
 
@@ -158,9 +183,9 @@ class PaintMixer extends HTMLElement {
 
     const info = this.querySelector(".mixer-info");
     info.innerHTML = `
-      <div>Speed: <strong>${this.speed} RPM</strong></div>
-      <div>Base time: <strong>${this.baseTime} sec</strong></div>
-    `;
+  <div>Speed: <strong>${this.speed} RPM</strong></div>
+  <div>Base time: <strong>${this.baseTime} sec</strong></div>
+`;
 
     // add the hourglass animation
     const indicator = this.querySelector(".status-indicator");
